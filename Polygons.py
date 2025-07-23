@@ -1,5 +1,6 @@
-import pygame
 import sys
+
+import pygame
 from shapely.geometry import Polygon, Point
 from shapely.ops import unary_union
 
@@ -33,11 +34,13 @@ error_font = pygame.font.SysFont("colibri", 32)
 
 buttonRect = pygame.Rect(10, 5, 100, 30)
 
+
 def draw_top_panel(surface):
     pygame.draw.rect(surface, (40, 40, 40), (0, 0, WIDTH, 40))
     pygame.draw.rect(surface, grayNSU, buttonRect, border_radius=5)
     top_panel_text = font.render("Help", True, (255, 255, 255))
     surface.blit(top_panel_text, (buttonRect.x + 25, buttonRect.y + 5))
+
 
 def save_state():
     copied = []
@@ -48,6 +51,7 @@ def save_state():
             'selected': p['selected']
         })
     history.append(copied)
+
 
 def draw_polygon_fill(surface, poly, polygon_color):
     if poly.geom_type == 'Polygon':
@@ -66,6 +70,7 @@ def draw_polygon_fill(surface, poly, polygon_color):
         for p in poly.geoms:
             draw_polygon_fill(surface, p, polygon_color)
 
+
 def draw_polygon_outline(surface, poly, polygon_color):
     if poly.geom_type == 'Polygon':
         exterior = list(poly.exterior.coords)
@@ -79,6 +84,7 @@ def draw_polygon_outline(surface, poly, polygon_color):
         for p in poly.geoms:
             draw_polygon_outline(surface, p, polygon_color)
 
+
 def get_polygon_at_pos(pos):
     poly_point = Point(pos)
     for i, poly_data in enumerate(reversed(polygons)):
@@ -86,10 +92,12 @@ def get_polygon_at_pos(pos):
             return len(polygons) - 1 - i
     return -1
 
+
 def show_error(msg):
     global errorMessage, errorTime
     errorMessage = msg
     errorTime = pygame.time.get_ticks()
+
 
 def apply_union():
     global polygons, resultPoly, operationText
@@ -108,6 +116,7 @@ def apply_union():
 
     operationText = "union"
     resultPoly = None
+
 
 def apply_intersection():
     global polygons, resultPoly, operationText
@@ -134,6 +143,7 @@ def apply_intersection():
             polygons.append({'points': new_points, 'poly': part, 'selected': False})
     operationText = "intersection"
     resultPoly = None
+
 
 def apply_difference():
     global polygons, resultPoly, operationText
@@ -162,6 +172,7 @@ def apply_difference():
     operationText = "difference"
     resultPoly = None
 
+
 def apply_clear():
     global polygons, resultPoly, operationText
     if polygons:
@@ -170,10 +181,12 @@ def apply_clear():
     resultPoly = None
     operationText = "cleared"
 
+
 def apply_reset():
     global resultPoly, operationText
     resultPoly = None
     operationText = ""
+
 
 running = True
 while running:
@@ -290,7 +303,7 @@ while running:
 
     if showHelp:
         help_surface = pygame.Surface((420, 250), pygame.SRCALPHA)
-        help_surface.fill((67,67,67, 200))
+        help_surface.fill((67, 67, 67, 200))
 
         for i, text in enumerate(info_text):
             text_surf = font.render(text, True, textColor)
