@@ -260,7 +260,7 @@ while running:
                 apply_difference()
             elif event.key == pygame.K_c:
                 apply_clear()
-            elif event.key == pygame.K_r:
+            elif event.key == pygame.K_z and (pygame.key.get_mods() & pygame.KMOD_CTRL):
                 if history:
                     polygons = history.pop()
                     resultPoly = None
@@ -307,7 +307,7 @@ while running:
         "Delete: delete selected polygons",
         "U: union  I: intersection  D: difference",
         "C: clear all",
-        "R: undo last operation",
+        "Ctrl + Z: undo last operation",
         "Ctrl + LMB: select polygon"
     ]
 
