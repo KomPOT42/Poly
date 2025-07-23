@@ -28,6 +28,7 @@ errorMessage = ""
 errorTime = 0
 history = []
 showHelp = False
+last_hover_index = -1
 
 font = pygame.font.SysFont("colibri", 32)
 error_font = pygame.font.SysFont("colibri", 32)
@@ -85,12 +86,13 @@ def draw_polygon_outline(surface, poly, polygon_color):
             draw_polygon_outline(surface, p, polygon_color)
 
 
-def get_polygon_at_pos(pos):
+def get_polygons_at_pos(pos):
     poly_point = Point(pos)
+    indices = []
     for i, poly_data in enumerate(reversed(polygons)):
         if poly_data['poly'].contains(poly_point):
-            return len(polygons) - 1 - i
-    return -1
+            indices.append(len(polygons) - 1 - i)
+    return indices
 
 
 def show_error(msg):
@@ -192,7 +194,8 @@ running = True
 while running:
     current_time = pygame.time.get_ticks()
     mouse_pos = pygame.mouse.get_pos()
-    hover_index = get_polygon_at_pos(mouse_pos) if not currentPoly else -1
+    hover_indices = get_polygons_at_pos(mouse_pos) if not currentPoly else []
+    hover_index = hover_indices[0] if hover_indices else -1
 
     if errorMessage and current_time - errorTime > 3000:
         errorMessage = ""
@@ -213,8 +216,15 @@ while running:
                 if currentPoly:
                     currentPoly.append(mouse_pos)
                 else:
-                    if ctrl_held and hover_index != -1:
-                        polygons[hover_index]['selected'] = not polygons[hover_index]['selected']
+                    if ctrl_held and hover_indices:
+                        if last_hover_index in hover_indices:
+                            current_index = hover_indices.index(last_hover_index)
+                            next_index = (current_index + 1) % len(hover_indices)
+                        else:
+                            next_index = 0
+                        selected_index = hover_indices[next_index]
+                        polygons[selected_index]['selected'] = not polygons[selected_index]['selected']
+                        last_hover_index = selected_index
                     else:
                         history.clear()
                         currentPoly = [mouse_pos]
